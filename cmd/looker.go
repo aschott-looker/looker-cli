@@ -26,8 +26,13 @@
 package cmd
 
 import (
+  "encoding/json"
   "fmt"
+  "strings"
 
+  "github.com/aschott-looker/looker-cli/api"
+  "github.com/davecgh/go-spew/spew"
+  v4 "github.com/looker-open-source/sdk-codegen/go/sdk/v4"
   "github.com/spf13/cobra"
 )
 
@@ -7861,8 +7866,24 @@ var createUserCmd = &cobra.Command{
     body, _ := cmd.Flags().GetString("body")
     fmt.Println("body set to", body)
 
+    var writeUser v4.WriteUser
+    err := json.NewDecoder(strings.NewReader(body)).Decode(&writeUser)
+    if err != nil {
+      fmt.Println("Error when decoding json")
+    }
+
     fields, _ := cmd.Flags().GetString("fields")
     fmt.Println("fields set to", fields)
+
+    fmt.Println("Input to API is\nbody:", writeUser, "\nfields:", fields)
+    sdk := api.InitSdk()
+    user, err := sdk.CreateUser(writeUser, fields, nil)
+    if err != nil {
+      fmt.Println("SDK failure:", err)
+      return
+    }
+    fmt.Printf("Received value:")
+    spew.Dump(user)
   },
 }
 

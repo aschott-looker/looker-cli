@@ -3,6 +3,7 @@ module github.com/aschott-looker/looker-cli
 go 1.18
 
 require (
+	github.com/davecgh/go-spew v1.1.1
 	github.com/looker-open-source/sdk-codegen/go v0.0.1
 	github.com/spf13/cobra v1.3.0
 )
