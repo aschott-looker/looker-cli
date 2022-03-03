@@ -7852,6 +7852,22 @@ var allUsersCmd = &cobra.Command{
 
     ids, _ := cmd.Flags().GetString("ids")
     fmt.Println("ids set to", ids)
+
+    var requestAllUsers v4.RequestAllUsers
+    formattedInput := fmt.Sprintf(`{"Fields": "%s", "Page": %d, "PerPage": %d, "Sorts": "%s"}`, fields, page, per_page, sorts)
+    fmt.Println("Formatted input:\n", formattedInput)
+    err := json.NewDecoder(strings.NewReader(formattedInput)).Decode(&requestAllUsers)
+    if err != nil {
+      fmt.Println("Failure to marshal input into model\n", err)
+      return
+    }
+
+    fmt.Println("Input to api is:")
+    spew.Dump(requestAllUsers)
+    sdk := api.InitSdk()
+    allUser, err := sdk.AllUsers(requestAllUsers, nil)
+    fmt.Println("Received value:")
+    spew.Dump(allUser)
   },
 }
 
