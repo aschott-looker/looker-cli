@@ -36,6 +36,10 @@ import (
   "github.com/spf13/cobra"
 )
 
+var (
+  sdk = api.InitSdk()
+)
+
 var AlertCmd = &cobra.Command{
   Use:   "Alert",
   Short: "Alert",
@@ -7821,6 +7825,13 @@ var meCmd = &cobra.Command{
 
     fields, _ := cmd.Flags().GetString("fields")
     fmt.Println("fields set to", fields)
+
+    response, err := sdk.Me(fields, nil)
+    if err != nil {
+      fmt.Println("Error while calling API: ", err)
+    }
+    fmt.Println("Received response:")
+    spew.Dump(response)
   },
 }
 
@@ -7864,7 +7875,6 @@ var allUsersCmd = &cobra.Command{
 
     fmt.Println("Input to api is:")
     spew.Dump(requestAllUsers)
-    sdk := api.InitSdk()
     allUser, err := sdk.AllUsers(requestAllUsers, nil)
     fmt.Println("Received value:")
     spew.Dump(allUser)
@@ -7892,7 +7902,6 @@ var createUserCmd = &cobra.Command{
     fmt.Println("fields set to", fields)
 
     fmt.Println("Input to API is\nbody:", writeUser, "\nfields:", fields)
-    sdk := api.InitSdk()
     user, err := sdk.CreateUser(writeUser, fields, nil)
     if err != nil {
       fmt.Println("SDK failure:", err)
@@ -8062,6 +8071,13 @@ The user name and avatar url, but no sensitive information.
 
     fields, _ := cmd.Flags().GetString("fields")
     fmt.Println("fields set to", fields)
+
+    response, err := sdk.User(user_id, fields, nil)
+    if err != nil {
+      fmt.Println("Error while calling API: ", err)
+    }
+    fmt.Println("Received response:")
+    spew.Dump(response)
   },
 }
 
@@ -8079,8 +8095,21 @@ var updateUserCmd = &cobra.Command{
     body, _ := cmd.Flags().GetString("body")
     fmt.Println("body set to", body)
 
+    var writeUser v4.WriteUser
+    err := json.NewDecoder(strings.NewReader(body)).Decode(&writeUser)
+    if err != nil {
+      fmt.Println("Error when decoding json")
+    }
+
     fields, _ := cmd.Flags().GetString("fields")
     fmt.Println("fields set to", fields)
+
+    response, err := sdk.UpdateUser(user_id, writeUser, fields, nil)
+    if err != nil {
+      fmt.Println("Error while calling API: ", err)
+    }
+    fmt.Println("Received response:")
+    spew.Dump(response)
   },
 }
 
@@ -8096,6 +8125,13 @@ var deleteUserCmd = &cobra.Command{
 
     user_id, _ := cmd.Flags().GetInt64("user_id")
     fmt.Println("user_id set to", user_id)
+
+    response, err := sdk.DeleteUser(user_id, nil)
+    if err != nil {
+      fmt.Println("Error while calling API: ", err)
+    }
+    fmt.Println("Received response:")
+    spew.Dump(response)
   },
 }
 
